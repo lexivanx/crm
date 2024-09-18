@@ -1,0 +1,84 @@
+﻿@page
+@model CRMWeb.Pages.AnalyticsModel
+@{
+    ViewData["Title"] = "Analytics";
+}
+
+<h2>Product Sample Distribution</h2>
+<div class="chart-container" style="position: relative; height:300px; width:300px;">
+<canvas id="productDistributionChart"></canvas>
+</div>
+
+<h2>Doctor Visit Distribution</h2>
+<div class="chart-container" style="position: relative; height:300px; width:300px;">
+<canvas id="doctorVisitChart" width="400" height="400"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var productLabels = @Html.Raw(Json.Serialize(Model.ProductSampleDistribution.Keys));
+        var productData = @Html.Raw(Json.Serialize(Model.ProductSampleDistribution.Values));
+
+        var productCtx = document.getElementById('productDistributionChart').getContext('2d');
+        var productChart = new Chart(productCtx, {
+            type: 'pie',
+            data: {
+                labels: productLabels,
+                datasets: [{
+                    label: 'Product Distribution',
+                    data: productData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        var doctorLabels = @Html.Raw(Json.Serialize(Model.DoctorVisitDistribution.Keys));
+        var doctorData = @Html.Raw(Json.Serialize(Model.DoctorVisitDistribution.Values));
+
+        var doctorCtx = document.getElementById('doctorVisitChart').getContext('2d');
+        var doctorChart = new Chart(doctorCtx, {
+            type: 'bar',
+            data: {
+                labels: doctorLabels,
+                datasets: [{
+                    label: 'Doctor Visits',
+                    data: doctorData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

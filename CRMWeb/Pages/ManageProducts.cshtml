@@ -1,0 +1,70 @@
+﻿@page
+@model CRMWeb.Pages.ManageProductsModel
+@{
+    ViewData["Title"] = "Manage Products";
+}
+
+<h2>Manage Products</h2>
+
+<form method="post" asp-page-handler="AssignProduct" class="form-group">
+    <div class="mb-3">
+        <label for="ProductID" >Select Product:</label>
+        <select asp-for="ProductID" class="form-select">
+            @foreach (var product in Model.Products)
+            {
+                <option value="@product.Id">@product.Name (Expiry: @product.Expiry.ToShortDateString())</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="Quantity">Quantity to assign:</label>
+        <input type="number" asp-for="Quantity" min="1" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Assign Product</button>
+
+    @if (ViewData.ModelState[""]?.Errors?.Count > 0)
+    {
+        <p class="text-danger"> @ViewData.ModelState[""]?.Errors?[0]?.ErrorMessage </p>
+    }
+
+</form>
+
+<hr />
+
+<h3>All company products</h3>
+<ul class="list-group mb-4">
+    @foreach (var product in Model.Products)
+    {
+        <li class="list-group-item">@product.Name (Quantity: @product.Quantity, Expiry: @product.Expiry.ToShortDateString())</li>
+    }
+</ul>
+
+<hr />
+
+<h3>My Products</h3>
+<ul class="list-group">
+    @if (Model.UserProducts.Count > 0)
+    {
+        @foreach (var userProduct in Model.UserProducts)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @if (userProduct.Product != null)
+                {
+                    @($"{userProduct.Product.Name} (Assigned Quantity: {userProduct.Quantity}, Expiry: {userProduct.Product.Expiry.ToShortDateString()})")
+
+                    <form method="post" asp-page-handler="RemoveProduct" class="d-inline">
+                        <input type="hidden" name="userId" value="@userProduct.UserID" />
+                        <input type="hidden" name="productId" value="@userProduct.ProductID" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                }
+            </li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item">You do not have any assigned products.</li>
+    }
+</ul>

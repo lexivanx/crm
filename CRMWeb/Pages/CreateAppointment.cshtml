@@ -1,0 +1,59 @@
+﻿@page
+@model CRMWeb.Pages.CreateAppointmentModel
+@{
+    ViewData["Title"] = "Create Appointment";
+}
+
+<h2>Create Appointment</h2>
+
+<form method="post" class="form-group">
+    <div class="mb-3">
+        <label>Doctor</label>
+        <select asp-for="DoctorID" asp-items="@(Model.Doctors != null ? new SelectList(Model.Doctors, "Id", "Name") : null)" class="form-select">
+            <option value="">-- Select Doctor --</option>
+        </select>
+        <span asp-validation-for="DoctorID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Products</label>
+        <div id="product-list" class="form-check">
+            @if (Model.UserProducts != null)
+            {
+                @for (int i = 0; i < Model.UserProducts.Count; i++)
+                {
+                    <div class="mb-2">
+                        <label class="form-check-label">
+                            <input type="checkbox" name="SelectedProductIDs" value="@Model.UserProducts[i].ProductID" class="form-check-input" />
+                            @Model.UserProducts[i].Product?.Name (Available: @Model.UserProducts[i].Quantity, Expiry: @Model.UserProducts[i].Product?.Expiry.ToShortDateString())
+                        </label>
+                        <input type="number" name="SelectedQuantities" min="1" placeholder="Quantity" class="form-control d-inline w-25" />
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Date</label>
+        <input asp-for="AppointmentDate" type="date" class="form-control" />
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Time</label>
+        <input asp-for="AppointmentTime" type="time" class="form-control" />
+        <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+
+    @if (ViewData.ModelState[""]?.Errors?.Count > 0)
+    {
+        <p class="text-danger"> @(ViewData.ModelState[""]?.Errors?.FirstOrDefault()?.ErrorMessage ?? "Unknown Error") </p>
+    }
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
